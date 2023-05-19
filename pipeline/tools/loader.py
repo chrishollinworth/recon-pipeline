@@ -51,11 +51,29 @@ def get_go_version(loader=None, node=None):
     response = conn.getresponse().read().decode()
 
     for line in response.splitlines():
-        if "linux-amd64.tar.gz" in line:
-            match = re.search(rf"href=./dl/(go.*\.linux-{arch}\.tar\.gz).>", line)
+        if f"linux-{arch}.tar.gz" in line:
+            match = re.search(r'href=[\'"]?([^\'" >]+)', line)
             if not match:
                 return err_msg.replace("find", "parse")
-            return match.group(1)  # go1.16.3.linux-
+            return f"https://go.dev{match.group(1)}"    
+    return err_msg
+
+
+def get_aquatone_version(loader=None, node=None):
+    """ downloads aquatone """
+    arch = defaults.get("arch")
+    err_msg = "Could not find latest aquatone version download url"
+
+    conn = client.HTTPSConnection("github.com")
+    conn.request("GET", "/michenriksen/aquatone/releases/expanded_assets/v1.7.0")
+    response = conn.getresponse().read().decode()
+
+    for line in response.splitlines():
+        if f"aquatone_linux_{arch}" in line:
+            match = re.search(r'href=[\'"]?([^\'" >]+)', line)
+            if not match:
+                return err_msg.replace("find", "parse")
+            return f"https://github.com{match.group(1)}"    
     return err_msg
 
 
@@ -64,7 +82,8 @@ yaml.add_constructor("!join_empty", join_empty)
 yaml.add_constructor("!join_path", join_path)
 yaml.add_constructor("!get_default", get_default)
 yaml.add_constructor("!get_tool_path", get_tool_path)
-yaml.add_constructor("!get_go_version,", get_go_version)
+yaml.add_constructor("!get_go_version", get_go_version)
+yaml.add_constructor("!get_aquatone_version", get_aquatone_version)
 
 
 def load_yaml(file):

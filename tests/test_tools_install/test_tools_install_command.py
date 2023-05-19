@@ -272,14 +272,14 @@ class TestUnmockedToolsInstall:
         sed_cmd = f"s#/opt#{self.shell.tools_dir}#g"
 
         if test_input == "update":
-            subprocess.run(f"git clone https://github.com/offensive-security/exploitdb.git {dependency_path}".split())
+            subprocess.run(f"git clone https://github.com/exploit-database/exploitdb.git {dependency_path}".split())
 
         tools_copy.get(tool)["path"] = tool_path
 
         first_cmd = "bash -c 'if [ -d /usr/share/exploitdb ]; then ln -fs "
         first_cmd += f"/usr/share/exploitdb {dependency_path} && ln -fs $(which searchsploit) {tool_path}"
         first_cmd += f"; elif [ -d {dependency_path} ]; then cd {dependency_path} && git fetch --all && git pull; else "
-        first_cmd += f"git clone https://github.com/offensive-security/exploitdb.git {dependency_path}; fi'"
+        first_cmd += f"git clone https://github.com/exploit-database/exploitdb.git {dependency_path}; fi'"
 
         tools_copy.get(tool).get("install_commands")[0] = first_cmd
 

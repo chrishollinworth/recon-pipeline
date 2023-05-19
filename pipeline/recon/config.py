@@ -2,6 +2,15 @@
 import platform
 from pathlib import Path
 
+# removed for now as not all tools support
+# if platform.machine() == 'i386':
+#    arch = '386'
+
+if platform.machine() == 'x86_64':
+   arch = 'amd64'
+
+if platform.machine() == 'aarch64':
+   arch = 'arm64'
 
 defaults = {
     "proxy": "",
@@ -12,7 +21,7 @@ defaults = {
     "results-dir": "recon-results",
     "aquatone-scan-timeout": "900",
     "home": Path.home(),
-    "arch": ["386", "amd64"][platform.architecture()[0].startswith("64")],
+    "arch": arch,
 }
 
 defaults["project-dir"] = str(Path(__file__).parents[2])
